@@ -1,0 +1,24 @@
+{
+  "name": "myfirstnodeapi",
+  "version": "1.0.0",
+  "description": "RESTful API Tut Project (Build a simple shop API)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "node",
+    "restful",
+    "api",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.2"
+  }
+}
