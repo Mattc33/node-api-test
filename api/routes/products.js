@@ -6,11 +6,26 @@ const Product = require('../models/product');
 
 router.get('/', (req, res, next) => {
     Product.find()
+        .select('name price _id')
         .exec()
         .then(result => {
-            console.log(`==> From DataBase: ${result}`);
+            const response = {
+                count: result.length,
+                // * map into a new array keeping the same amount of elments
+                products: result.map(result => {
+                    return {
+                        name: result.name,
+                        price: result.name,
+                        _id: result._id,
+                        request: {
+                            type: 'GET',
+                            url: 'http://localhost:2000/products/' + result._id
+                        }
+                    }
+                })
+            };
             if (result) {
-                res.status(200).json(result);
+                res.status(200).json(response);
             }
         })
         .catch(err => {
@@ -33,7 +48,15 @@ router.post('/', (req, res, next) => {
             console.log(result);
             res.status(201).json({ // * status code of 201 is industry standard for a succesful post
                 message: 'Handling POST requests to /products',
-                product: product
+                createdProduct: {
+                    _id: result._id,
+                    name: result.name,
+                    price: result.price,
+                    request: {
+                        type: 'GET',
+                        url: 'http://localhost:2000/products/' + result._id
+                    }
+                }
             });
         })
         .catch(err => {
@@ -48,12 +71,20 @@ router.post('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => { // * semicolon indicates a parameter
     const id = req.params.productId;
     Product.findById(id)
+        .select('name price _id')
         .exec()
         .then(result => {
             console.log(`==> From DataBase: ${result}`);
             // * send res from the then block when u know you gotten the data
             if (result) {
-                res.status(200).json(result);
+                res.status(200).json({
+                    product: result,
+                    request: {
+                        type: 'GET',
+                        description: 'GET_ALL_PRODUCTS',
+                        url: 'http://localhost/products'
+                    }
+                });
             } else {
                 res.status(400).json({
                     message: "No valid entry found for provided ID"
@@ -66,7 +97,6 @@ router.get('/:productId', (req, res, next) => { // * semicolon indicates a param
         });
         // * since the above code is asynchronous
         // * code I write here will execute immediately and won't wait for the async code to finish
-
 });
 
 router.patch('/:productId', (req, res, next) => {
@@ -79,7 +109,13 @@ router.patch('/:productId', (req, res, next) => {
     // * 2nd arg describes how you want to change this obj mongoose understands the $set signifier, it then takes an obj containing the key-value pairs u want to edit
         .exec()                            
         .then(result => {
-            res.status(200).json(result);
+            res.status(200).json({
+                message: 'Product updated',
+                request: {
+                    type: 'GET',
+                    url: 'http://localhost/products/' + id
+                }
+            });
         })
         .catch(error => {
             console.log(error);
@@ -93,7 +129,14 @@ router.delete('/:productId', (req, res, next) => {
         .exec() // * to get a real promise
         .then(result => {
             // if (result.length >= 0) {
-                res.status(200).json({message: `succesfully deleted ${id}`});
+                res.status(200).json({
+                    message: `Product deleted ${id}`,
+                    request: {
+                        type: 'POST',
+                        url: 'http://localhost:2000/products',
+                        body: {name: 'String', price: 'Number' }
+                    }
+                });
             // } else {
             //     res.status(404).json({message: 'No entries found'})
             // }

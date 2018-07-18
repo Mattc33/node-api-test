@@ -10,7 +10,8 @@ mongoose.connect( // * using mongoose to connect to MongoDB Atlas
     {
         useMongoClient: true
     }
-)
+);
+mongoose.Promise = global.Promise;
 
 module.exports = (app) => {
     app.use(morgan('combined')); // * morgan is a 3rd party logging lib
