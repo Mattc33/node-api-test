@@ -1,3 +1,4 @@
+const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -15,6 +16,7 @@ mongoose.Promise = global.Promise;
 
 module.exports = (app) => {
     app.use(morgan('combined')); // * morgan is a 3rd party logging lib
+    app.use('/uploads/', express.static('uploads')); // * make the uploads folder static so it can be accessed publicly
     app.use(bodyParser.urlencoded({extended: false})); // * which kind of bodies do you want to parse? urlencoded, extended true gives u ability to parse data with rich data
     app.use(bodyParser.json()); // * extract json data and makes it readable for us
 
@@ -41,7 +43,7 @@ module.exports = (app) => {
 
     app.use((req, res, next) => {
         const error = new Error('Not Found'); // * If no routes match then produce a 404
-        error.status(404); // * a 404 is standard practice for a address that has nothing
+        res.status(404); // * a 404 is standard practice for a address that has nothing
         next(error); // * This will forward this request(error)
     });
 
