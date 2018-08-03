@@ -8,10 +8,7 @@ const orderRoutes = require('./routes/orders');
 const userRoutes = require('./routes/users');
 
 mongoose.connect( // * using mongoose to connect to MongoDB Atlas
-    `mongodb+srv://mattc3303:${process.env.MONGO_ATLAS_PW}@matttestcluster-vvajl.gcp.mongodb.net/test?retryWrites=true`,
-    {
-        useMongoClient: true
-    }
+    `mongodb+srv://mattc3303:${process.env.MONGO_ATLAS_PW}@matttestcluster-vvajl.gcp.mongodb.net/test?retryWrites=true`
 );
 mongoose.Promise = global.Promise;
 
@@ -41,7 +38,7 @@ module.exports = (app) => {
     // ? Routes to handle Requests
     app.use('/products', productRoutes);
     app.use('/orders', orderRoutes);
-    app.ise('/users', userRoutes);
+    app.use('/user', userRoutes);
 
     app.use((req, res, next) => {
         const error = new Error('Not Found'); // * If no routes match then produce a 404
